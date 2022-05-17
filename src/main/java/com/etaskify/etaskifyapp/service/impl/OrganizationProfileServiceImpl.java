@@ -11,10 +11,12 @@ import com.etaskify.etaskifyapp.model.User;
 import com.etaskify.etaskifyapp.repository.OrganizationProfileRepository;
 import com.etaskify.etaskifyapp.repository.UserRepository;
 import com.etaskify.etaskifyapp.service.OrganizationProfileService;
-import com.etaskify.etaskifyapp.service.PasswordEncoderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.Collections;
 import java.util.Objects;
 
@@ -25,7 +27,9 @@ public class OrganizationProfileServiceImpl implements OrganizationProfileServic
 
     private final OrganizationProfileRepository organizationProfileRepository;
     private final UserRepository userRepository;
-    private final PasswordEncoderService encoderService;
+
+    @Qualifier("encoder")
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -35,7 +39,7 @@ public class OrganizationProfileServiceImpl implements OrganizationProfileServic
             return new ResponseDto(AppMessage.ALREADY_HAVE);
         }
         String password = organizationProfileDto.getOwnerDto().getPassword();
-        organizationProfileDto.getOwnerDto().setPassword(encoderService.bcryptEncryptor(password));
+        organizationProfileDto.getOwnerDto().setPassword(passwordEncoder.encode(password));
         OrganizationProfile organizationProfile = OrganizationProfileMapper.INSTANCE.toEntity(organizationProfileDto);
         User user = UserOwnerMapper.INSTANCE.toEntity(organizationProfileDto.getOwnerDto());
         user.setOrganizationProfile(organizationProfile);

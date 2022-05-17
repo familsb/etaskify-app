@@ -1,5 +1,6 @@
 package com.etaskify.etaskifyapp.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

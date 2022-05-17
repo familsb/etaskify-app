@@ -9,17 +9,17 @@ import com.etaskify.etaskifyapp.model.OrganizationProfile;
 import com.etaskify.etaskifyapp.model.User;
 import com.etaskify.etaskifyapp.repository.UserRepository;
 import com.etaskify.etaskifyapp.service.OrganizationProfileService;
-import com.etaskify.etaskifyapp.service.PasswordEncoderService;
 import com.etaskify.etaskifyapp.service.UserService;
 import com.etaskify.etaskifyapp.util.SecurityContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,7 +35,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final OrganizationProfileService organizationProfileService;
-    private final PasswordEncoderService encoderService;
+    @Qualifier("encoder")
+    private final PasswordEncoder passwordEncoder;
 
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findUserByEmail(email);
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         OrganizationProfile organizationProfile = organizationProfileService.findOrganizationProfileByEmail(SecurityContext.getLoggedUsername());
         user.setOrganizationProfile(organizationProfile);
         user.setAuthority(AuthorityName.ROLE_USER);
-        user.setPassword(encoderService.bcryptEncryptor("24355535"));
+        user.setPassword(passwordEncoder.encode("24355535"));
         UserMapper.INSTANCE.toDto(userRepository.save(user));
         return new ResponseDto(AppMessage.USER_CREATED);
     }

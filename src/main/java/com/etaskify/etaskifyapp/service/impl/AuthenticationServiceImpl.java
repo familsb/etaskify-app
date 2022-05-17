@@ -7,12 +7,14 @@ import com.etaskify.etaskifyapp.enums.AppMessage;
 import com.etaskify.etaskifyapp.exception.AppException;
 import com.etaskify.etaskifyapp.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
@@ -24,6 +26,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
         } catch (Exception e) {
+            log.info("{}", e);
             throw new AppException(AppMessage.USERNAME_OR_PASSWORD_INCORRECT);
         }
 
