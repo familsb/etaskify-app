@@ -22,4 +22,9 @@ public class AuthenticationController {
     public ApiResponse<AuthToken> signIn(@RequestBody @Valid AuthRequest authRequest) {
         return ApiResponse.withSuccess(authenticationService.authenticate(authRequest));
     }
+
+    @RequestMapping(value = "/sign-in", method = RequestMethod.POST)
+    public ApiResponse<AuthToken> signInD(@RequestBody @Valid AuthRequest authRequest) {
+        return ApiResponse.withSuccess(authenticationService.authenticate(authRequest));
+    }
 }
